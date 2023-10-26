@@ -1,0 +1,60 @@
+Visible tests:
+
+
+Hand	        Start card	Points
+7♣, Q♥, 2♣, J♣	9♥	0
+A♠, 3♥, K♥, 7♥	K♠	2
+A♠, 3♥, K♥, 7♥	2♦	5
+6♣, 7♣, 8♣, 9♣	8♠	20
+7♥, 9♠, 8♣, 7♣	8♥	24
+5♥, 5♠, 5♣, J♦	5♦	29
+
+
+hand_value([card(7, clubs),card(queen, hearts), card(2, clubs), card(jack, clubs)], card(9, hearts), P).
+
+hand_value([card(ace, spades),card(3, hearts), card(king, hearts), card(7, hearts)], card(king, spades), P).
+
+hand_value([card(ace, spades), card(3, hearts), card(king, hearts), card(7, hearts)], card(2, diamonds), P).
+
+hand_value([card(6, clubs), card(7, clubs), card(8, clubs), card(9, clubs)], card(8, spades), P).
+
+hand_value([card(7, hearts), card(9, spades), card(8, clubs), card(7, clubs)], card(8, hearts), P).
+
+hand_value([card(5, hearts), card(5, spades), card(5, clubs), card(jack, diamonds)], card(5, diamonds), P).
+
+
+
+expected_value([card(ace,spades),card(ace,hearts),card(2,spades),card(2,hearts)],[card(ace,spades),card(ace,hearts),card(2,spades),card(2,hearts),card(ace,clubs),card(ace,diamonds)],EV).
+expected_value([card(ace,spades),card(ace,hearts),card(ace,clubs),card(ace,diamonds)],[card(ace,spades),card(ace,hearts),card(ace,clubs),card(ace,diamonds) ,card(2,spades),card(2,hearts)],EV).
+
+find_best_hand([[card(ace,spades),card(ace,hearts),card(ace,clubs),card(ace,diamonds)],[card(ace,spades),card(ace,hearts),card(2,spades),card(2,hearts)]],[card(ace,spades),card(ace,hearts),card(2,spades),card(2,hearts),card(ace,clubs),card(ace,diamonds)],[],0,Hand).
+
+select_hand([card(ace,spades),card(ace,hearts),card(2,spades),card(2,hearts),card(ace,clubs),card(ace,diamonds)],Hand,Crib).
+
+
+[[card(ace, spades), card(ace, hearts), card(2, spades), card(ace, clubs)], [card(ace, spades), card(ace, hearts), card(2, spades), card(ace, diamonds)], [card(ace, spades), card(ace, hearts), card(ace, clubs), card(ace, diamonds)], [card(ace, spades), card(2, spades), card(ace, clubs), card(ace, diamonds)], [card(ace, hearts), card(2, spades), card(ace, clubs), card(ace, diamonds)]]
+
+[card(ace,spades),card(ace,hearts),card(2,spades),card(ace,clubs),card(ace,diamonds)]
+
+
+
+
+select_hand(Cards, BestHand, Cribcards) :-
+    findall(Hand, subset(Cards, 4, Hand), Hands),
+    find_best_hand(Hands, Cards, [], 0, BestHand),
+    subtract(Cards, BestHand, Cribcards).
+
+find_best_hand([], _, BestHand, _, BestHand).
+find_best_hand([Hand|Rest], Cards, CurrentBestHand, CurrentBestValue, BestHand) :-
+    expected_value(Hand, Cards, Value),
+    ( Value > CurrentBestValue
+    ->  find_best_hand(Rest, Cards, Hand, Value, BestHand)
+    ;   find_best_hand(Rest, Cards, CurrentBestHand, CurrentBestValue, BestHand)
+    ).
+    
+
+
+(P↔(Q∧R))∧(Q↔(C ∨ P))∧(R↔(B→P))∧(P ∨ Q ∨ R)∧(A ∨ B ∨ C)∧¬(P∧A)∧¬(Q∧B)∧¬(R∧C)
+
+
+
